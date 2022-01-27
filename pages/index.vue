@@ -1,5 +1,5 @@
 <template>
-  <Tutorial />
+  <TodoForm />
 </template>
 
 <script lang="ts">
@@ -9,3 +9,8 @@ export default Vue.extend({
   name: 'IndexPage'
 })
 </script>
+<style>
+  body{
+    background-color: #92A9BD;
+  }
+</style>
