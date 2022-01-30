@@ -1,25 +1,27 @@
 <template>
-  <div class="mt-10 border rounded-2xl shadow-2xl h-20">
-    <input id="todo-input" v-model="input" type="text" placeholder="Enter a todo..." class="border m-auto h-8 mr-2 w-80 shadow-2xl">
-    <button id="save" class="border rounded-xl w-20 h-8 shadow-2xl m-auto" @click="saveTodo">
+  <div class="mt-10 border rounded-xl shadow-2xl">
+    <input id="todo-input" v-model="input" type="text" placeholder="Enter a todo..." class="border h-8 mr-2 w-80 shadow-2xl">
+    <button id="save" class="border rounded-xl w-28 h-8 shadow-2xl" @click="saveTodo">
       Save
     </button>
   </div>
 </template>
-<script lang="ts">
+<script>
 import Vue from 'vue'
 
 export default Vue.extend({
   name: 'TodoForm',
   data () {
     return {
-      input: ''
+      input: '',
+      count: 3
     }
   },
   methods: {
     saveTodo () {
-      // eslint-disable-next-line no-console
-      console.log(this.input)
+      this.$store.dispatch('mock/addTodo', { id: this.count, todo: this.input })
+      console.log(this.$store.state.mock)
+      this.count++
     }
   }
 })
@@ -27,8 +29,6 @@ export default Vue.extend({
 <style scoped>
   div {
     display: flex;
-    place-content: center;
-    justify-content: space-evenly;
     border-color: #264b6b;
     background-color: #264b6b;
     margin-left: 25%;
@@ -37,10 +37,15 @@ export default Vue.extend({
     padding-left: 3%
   }
   button {
+    margin-left: 15%;
+    margin-top: 5%;
+    margin-bottom: 5%;
     background-color: #7C99AC;
     border-color: #7C99AC;
   }
   input {
+    margin-top: 5%;
+    margin-bottom: 5%;
     color: rgb(255, 255, 255);
     background-color: #254a69;
     border-color: #254a69;

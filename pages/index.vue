@@ -1,5 +1,8 @@
 <template>
-  <TodoForm />
+  <div>
+    <TodoForm />
+    <TodoList />
+  </div>
 </template>
 
 <script lang="ts">

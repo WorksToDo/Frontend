@@ -6,9 +6,7 @@ describe('TodoForm', () => {
     const wrapper = mount(TodoForm)
     expect(wrapper.vm).toBeTruthy()
   })
-})
 
-describe('TodoForm', () => {
   test('is todo form valid', async () => {
     const wrapper = mount(TodoForm)
     const input = await wrapper.find('#todo-input')
@@ -16,9 +14,7 @@ describe('TodoForm', () => {
     expect(input).toBeTruthy()
     expect(wrapper.vm.input).toBe('buy some milk')
   })
-})
 
-describe('TodoForm', () => {
   test('is save button clickable', async () => {
     const wrapper = mount(TodoForm)
     const mockSave = jest.fn()

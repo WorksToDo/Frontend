@@ -1,37 +1,36 @@
-import { createLocalVue, mount, shallowMount } from '@vue/test-utils'
+import { mount, shallowMount } from '@vue/test-utils'
 import Vuex from 'vuex'
+import Vue from 'vue'
 import TodoList from '~/components/TodoList.vue'
+import mockStore from '~/store/mock/index'
 
-const localVue = createLocalVue()
-localVue.use(Vuex)
-
-const mockTodoList = [{ id: 0, todo: 'buy some milk' }, { id: 1, todo: 'drink some milk' }]
+Vue.use(Vuex)
 
 describe('TodoList', () => {
-  let store
-  const state = {
-    todos: mockTodoList
+  const store = {
+    state: {},
+    actions: {},
+    mutations: {},
+    getters: {
+      'mock/getTodos': jest.fn()
+    }
   }
 
-  // eslint-disable-next-line prefer-const
-  store = new Vuex.Store({
-    state
-  })
-
   test('is a Vue instance', () => {
-    const wrapper = mount(TodoList)
+    const wrapper = mount(TodoList, {
+      mocks: {
+        $store: store
+      }
+    })
     expect(wrapper.vm).toBeTruthy()
+    console.log(store.getters['mock/getTodos'])
   })
 
   test('is a todo list renders correctly?', () => {
-    const wrapper = shallowMount(TodoList, {
-      store,
-      localVue
+    const wrapper = mount(TodoList, {
+      store
     })
     const item0 = wrapper.find('#todo0')
-    const item1 = wrapper.find('#todo1')
-
-    expect(item0.innerHTML).toBe(store.state.todos[0].todo)
-    expect(item1.innerHTML).toBe(store.state.todos[1].todo)
+    expect(item0).toBeTruthy()
   })
 })
