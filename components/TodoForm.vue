@@ -41,6 +41,7 @@ export default Vue.extend({
     border-color: #7C99AC;
   }
   input {
+    color: rgb(255, 255, 255);
     background-color: #254a69;
     border-color: #254a69;
     caret-color: white;
