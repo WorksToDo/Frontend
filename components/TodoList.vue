@@ -1,21 +1,21 @@
 <template>
   <div>
-    <ul class="mt-3 border rounded-xl shadow-2xl">
+    <!-- <ul class="mt-3 border rounded-xl shadow-2xl">
       <li v-for="item in todos" :id="'todo'+item.id" :key="item.id">
         {{ item.todo }}
       </li>
-    </ul>
+    </ul> -->
   </div>
 </template>
 
 <script>
 export default {
-  computed: {
-    todos () {
-      console.log(this.$store.getters['mock/getTodos'])
-      return this.$store.getters['mock/getTodos']
-    }
-  }
+  // computed: {
+  //   todos () {
+  //     console.log(this.$store.getters['mock/getTodos'])
+  //     return this.$store.getters['mock/getTodos']
+  //   }
+  // }
 }
 </script>
 

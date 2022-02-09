@@ -2,29 +2,28 @@ import { mount } from '@vue/test-utils'
 import TodoForm from '~/components/TodoForm.vue'
 
 describe('TodoForm', () => {
-  test('is a Vue instance', () => {
+  it('renders correctly', () => {
     const wrapper = mount(TodoForm)
     expect(wrapper.vm).toBeTruthy()
   })
-
-  test('is todo form valid', async () => {
+  it('todo input renders correctly', () => {
     const wrapper = mount(TodoForm)
-    const input = await wrapper.find('#todo-input')
-    input.setValue('buy some milk')
-    expect(input).toBeTruthy()
-    expect(wrapper.vm.input).toBe('buy some milk')
+    const todoInput = wrapper.find('#todo-input')
+    expect(todoInput.attributes().placeholder).toEqual('Enter a todo...')
   })
-
-  test('is save button clickable', async () => {
+  it('todo input connected to component data model successfully', () => {
+    const todoText = 'buy some milk'
     const wrapper = mount(TodoForm)
-    const mockSave = jest.fn()
-
+    const todoInput = wrapper.find('#todo-input')
+    todoInput.setValue(todoText)
+    expect(wrapper.vm.$data.todoInp).toEqual(todoText)
+  })
+  it('calls save function on click to save button', async () => {
+    const wrapper = mount(TodoForm)
     wrapper.setMethods({
-      saveTodo: mockSave
+      saveTodo: jest.fn()
     })
-
-    const button = wrapper.find('#save')
-    await button.trigger('click')
-    expect(mockSave).toHaveBeenCalled()
+    await wrapper.find('#save-button').trigger('click')
+    expect(wrapper.vm.saveTodo).toHaveBeenCalled()
   })
 })

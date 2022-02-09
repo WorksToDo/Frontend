@@ -1,7 +1,7 @@
 <template>
   <div class="mt-10 border rounded-xl shadow-2xl">
-    <input id="todo-input" v-model="input" type="text" placeholder="Enter a todo..." class="border h-8 mr-2 w-80 shadow-2xl">
-    <button id="save" class="border rounded-xl w-28 h-8 shadow-2xl" @click="saveTodo">
+    <input id="todo-input" v-model="todoInp" type="text" placeholder="Enter a todo..." class="border h-8 mr-2 w-80 shadow-2xl">
+    <button id="save-button" class="border rounded-xl w-28 h-8 shadow-2xl" @click="saveTodo">
       Save
     </button>
   </div>
@@ -13,15 +13,13 @@ export default Vue.extend({
   name: 'TodoForm',
   data () {
     return {
-      input: '',
-      count: 3
+      todoInp: ''
+      // count: 3
     }
   },
   methods: {
     saveTodo () {
-      this.$store.dispatch('mock/addTodo', { id: this.count, todo: this.input })
-      console.log(this.$store.state.mock)
-      this.count++
+      // API.post(this.todoInp)
     }
   }
 })
