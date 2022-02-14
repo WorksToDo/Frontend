@@ -1,21 +1,23 @@
 <template>
   <div>
-    <!-- <ul class="mt-3 border rounded-xl shadow-2xl">
-      <li v-for="item in todos" :id="'todo'+item.id" :key="item.id">
-        {{ item.todo }}
-      </li>
-    </ul> -->
+    <ul class="mt-3 border rounded-xl shadow-2xl">
+      <TodoItem v-for="item in todos" :id="'todo'+item.id" :key="item.id" :item="item" />
+    </ul>
   </div>
 </template>
 
 <script>
+// eslint-disable-next-line import/no-named-as-default
+import API from '~/api/api'
 export default {
-  // computed: {
-  //   todos () {
-  //     console.log(this.$store.getters['mock/getTodos'])
-  //     return this.$store.getters['mock/getTodos']
-  //   }
-  // }
+  data () {
+    return {
+      todos: []
+    }
+  },
+  async created () {
+    this.todos = await API.getTodoList()
+  }
 }
 </script>
 
