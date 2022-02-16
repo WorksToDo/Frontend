@@ -1,6 +1,6 @@
 /* eslint-disable vue/require-prop-types */
 <template>
-  <div>
+  <div class="todo-item">
     {{ item.todo }}
   </div>
 </template>

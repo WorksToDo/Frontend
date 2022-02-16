@@ -27,4 +27,12 @@ describe('TodoList', () => {
     await flushPromises()
     expect(wrapper.vm.todos).toEqual(mockResponse)
   })
+  test('save button adds item correctly', () => {
+    const wrapper = mount(TodoList)
+    wrapper.setMethods(
+      save : jest.fn()
+    )
+    const button = wrapper.find('#save-todo')
+
+  })
 })
