@@ -9,6 +9,7 @@ export class API {
       URL = URL.substr(0, URL.length - 1)
     }
     this.URL = URL
+    axios.defaults.baseURL = URL
   }
 
   withPath (path) {
@@ -20,7 +21,7 @@ export class API {
 
   // eslint-disable-next-line require-await
   async getTodoList () {
-    return axios.get(this.withPath('/todos')).then(r => r.data)
+    return await axios.get(this.withPath('/todos')).then(r => r.status)
   }
 }
 export default new API('https://localhost:3000')
