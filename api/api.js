@@ -3,7 +3,7 @@ import axios from 'axios'
 export class API {
   constructor (URL) {
     if (URL === undefined || URL === '') {
-      URL = process.env.TODO_APP_BASE_API_URL
+      URL = 'https://localhost:3000'
     }
     if (URL.endsWith('/')) {
       URL = URL.substr(0, URL.length - 1)
@@ -16,7 +16,7 @@ export class API {
     if (!path.startsWith('/')) {
       path = '/' + path
     }
-    return `${this.url}${path}`
+    return `${this.URL}${path}`
   }
 
   // eslint-disable-next-line require-await

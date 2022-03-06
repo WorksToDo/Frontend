@@ -1,37 +1,34 @@
 import { pactWith } from 'jest-pact'
+// eslint-disable-next-line import/named
 import { Matchers } from '@pact-foundation/pact'
-import { HTTPMethod } from '@pact-foundation/pact/src/common/request'
 import { API } from '~/api/api.js'
+const { eachLike } = Matchers
 
 const todoRequest = {
   id: 0,
   task: 'buy some milk'
 }
 
-pactWith({
-  consumer: 'todo-frontend',
-  provider: 'todo-backend'
-}, (provider) => {
-  let client
+pactWith({ consumer: 'todo-frontend', provider: 'todo-backend' }, (provider) => {
   describe('Todos', () => {
-    beforeEach(() =>
-      provider.addInteraction({
+    let client
+    beforeEach(() => {
+      client = new API(provider.mockService.baseUrl)
+    })
+    test('Get Todos', async () => {
+      await provider.addInteraction({
         state: 'Get todos successfully',
         uponReceiving: 'When todos (GET) request comes',
         withRequest: {
-          headers: { Accept: 'application/json' },
           path: '/todos',
-          method: HTTPMethod.GET
+          method: 'GET'
         },
         willRespondWith: {
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json; charset=UTF-8' },
           status: 200,
-          body: Matchers.eachLike(todoRequest)
+          body: eachLike(todoRequest)
         }
       })
-    )
-    it('get todos status ok', async () => {
-      client = new API(provider.mockService.baseUrl)
       await client.getTodoList()
     })
   })

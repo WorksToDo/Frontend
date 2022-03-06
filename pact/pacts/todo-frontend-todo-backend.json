@@ -1,0 +1,43 @@
+{
+  "consumer": {
+    "name": "todo-frontend"
+  },
+  "provider": {
+    "name": "todo-backend"
+  },
+  "interactions": [
+    {
+      "description": "When todos (GET) request comes",
+      "providerState": "Get todos successfully",
+      "request": {
+        "method": "GET",
+        "path": "/todos"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json; charset=UTF-8"
+        },
+        "body": [
+          {
+            "id": 0,
+            "task": "buy some milk"
+          }
+        ],
+        "matchingRules": {
+          "$.body": {
+            "min": 1
+          },
+          "$.body[*].*": {
+            "match": "type"
+          }
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "2.0.0"
+    }
+  }
+}
