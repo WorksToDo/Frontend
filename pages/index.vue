@@ -18,14 +18,13 @@ export default Vue.extend({
   },
   methods: {
     async saveTodo (todo: any) {
-      await API.addTodo({
-        task: todo
-      })
+      await API.addTodo(todo)
       this.todos = await API.getTodoList()
     }
   },
-  async created () {
+  async mounted () {
     this.todos = await API.getTodoList()
+    console.log(this.todos)
   }
 })
 </script>

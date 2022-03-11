@@ -1,7 +1,7 @@
-/* eslint-disable vue/require-prop-types */
+
 <template>
   <div class="todo-item">
-    {{ item.todo }}
+    {{ item.task }}
   </div>
 </template>
 
@@ -10,7 +10,7 @@ export default {
   props: {
     item: {
       id: Number,
-      todo: String
+      task: String
     }
   }
 }
