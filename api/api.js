@@ -21,7 +21,11 @@ export class API {
 
   // eslint-disable-next-line require-await
   async getTodoList () {
-    return await axios.get(this.withPath('/todos')).then(r => r.status)
+    return await axios.get(this.withPath('/todos')).then(r => r.data)
+  }
+
+  async addTodo (todo) {
+    return await axios.post(this.withPath('/todos'), todo).then(r => r.data)
   }
 }
-export default new API('https://localhost:3000')
+export default new API('https://localhost:5001')

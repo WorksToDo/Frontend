@@ -7,16 +7,9 @@
 </template>
 
 <script>
-// eslint-disable-next-line import/no-named-as-default
-import API from '~/api/api'
 export default {
-  data () {
-    return {
-      todos: []
-    }
-  },
-  async created () {
-    this.todos = await API.getTodoList()
+  props: {
+    todos: []
   }
 }
 </script>

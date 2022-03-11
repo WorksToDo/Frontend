@@ -7,8 +7,8 @@
   },
   "interactions": [
     {
-      "description": "When todos (GET) request comes",
-      "providerState": "Get todos successfully",
+      "description": "GET todos request",
+      "providerState": "all todos successfully",
       "request": {
         "method": "GET",
         "path": "/todos"
@@ -29,6 +29,37 @@
             "min": 1
           },
           "$.body[*].*": {
+            "match": "type"
+          }
+        }
+      }
+    },
+    {
+      "description": "POST todos request",
+      "providerState": "posted todo successfully",
+      "request": {
+        "method": "POST",
+        "path": "/todos",
+        "body": {
+          "task": "get some bread"
+        },
+        "matchingRules": {
+          "$.body": {
+            "match": "type"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json; charset=UTF-8"
+        },
+        "body": {
+          "id": 0,
+          "task": "buy some milk"
+        },
+        "matchingRules": {
+          "$.body": {
             "match": "type"
           }
         }

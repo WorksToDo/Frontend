@@ -19,7 +19,7 @@ export default Vue.extend({
   },
   methods: {
     saveTodo () {
-      // API.post(this.todoInp)
+      this.$emit('saveTodo', { task: this.todoInp })
     }
   }
 })
