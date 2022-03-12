@@ -24,7 +24,7 @@ pactWith({ consumer: 'todo-frontend', provider: 'todo-backend', pactfileWriteMod
           method: 'GET'
         },
         willRespondWith: {
-          headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+          headers: { 'Content-Type': 'application/json' },
           status: 200,
           body: eachLike(todoRequest)
         }
@@ -44,7 +44,7 @@ pactWith({ consumer: 'todo-frontend', provider: 'todo-backend', pactfileWriteMod
           body: like(postTodoRequest)
         },
         willRespondWith: {
-          headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+          headers: { 'Content-Type': 'application/json' },
           status: 200,
           body: like(todoRequest)
         }
