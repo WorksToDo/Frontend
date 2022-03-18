@@ -10,7 +10,7 @@
     "lint:js": "eslint --ext \".js,.ts,.vue\" --ignore-path .gitignore .",
     "lint": "npm run lint:js",
     "lintfix": "npm run lint:js -- --fix",
-    "test": "jest --watch",
+    "test": "jest component",
     "test:consumer": "jest test/cdc/Consumer.spec.js",
     "pact:publish": "node publish.js"
   },
