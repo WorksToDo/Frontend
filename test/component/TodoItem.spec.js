@@ -8,7 +8,7 @@ describe('TodoItem', () => {
       propsData: {
         item: {
           id: 2,
-          todo: 'buy some milk'
+          task: 'buy some milk'
         }
       }
     })
