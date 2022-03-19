@@ -3,7 +3,7 @@ import axios from 'axios'
 export class API {
   constructor (URL) {
     if (URL === undefined || URL === '') {
-      URL = 'http://localhost:5001'
+      URL = process.env.BACKEND_URL
     }
     if (URL.endsWith('/')) {
       URL = URL.substr(0, URL.length - 1)
@@ -28,4 +28,4 @@ export class API {
     return await axios.post(this.withPath('/todos'), todo).then(r => r.data)
   }
 }
-export default new API('http://localhost:5001')
+export default new API(process.env.BACKEND_URL)

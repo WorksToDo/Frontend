@@ -1,7 +1,9 @@
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
-
+  env: {
+    BACKEND_URL: process.env.BACKEND_URL | 'https://todo-backend-service:8080/'
+  },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: 'todo-frontend',

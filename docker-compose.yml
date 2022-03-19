@@ -1,0 +1,8 @@
+version: '3'
+services:
+  todo-frontend:
+    image: eneskzlcn/todo-frontend:latest
+    environment:
+      BACKEND_URL: "https://sanane.com:5000/"
+    ports:
+      - "4000:3000"

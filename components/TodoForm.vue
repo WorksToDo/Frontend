@@ -21,6 +21,9 @@ export default Vue.extend({
     saveTodo () {
       this.$emit('saveTodo', { task: this.todoInp })
     }
+  },
+  mounted () {
+    console.log(process.env.BACKEND_URL)
   }
 })
 </script>
