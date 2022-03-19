@@ -1,8 +1,8 @@
+loadEnvironments()
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
   env: {
-    BACKEND_URL: process.env.BACKEND_URL | 'https://todo-backend-service:8080/'
   },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -47,5 +47,12 @@ export default {
   ],
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+  }
+}
+
+function loadEnvironments () {
+  const test = process.env.NODE_ENV === 'test'
+  if (test) {
+    require('dotenv').config({ path: './.env/local' })
   }
 }

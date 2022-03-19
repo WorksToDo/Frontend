@@ -3,7 +3,7 @@ import axios from 'axios'
 export class API {
   constructor (URL) {
     if (URL === undefined || URL === '') {
-      URL = process.env.BACKEND_URL
+      URL = process.env.BACKEND_URL || ''
     }
     if (URL.endsWith('/')) {
       URL = URL.substr(0, URL.length - 1)

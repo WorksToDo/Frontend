@@ -1,59 +1,96 @@
 variables:
   DOCKER_HOST: tcp://docker:2375/
 stages:
-  - build
-  - test
-  - package
-  - prepare-test-artifacts
+#  - build
+#  - test
+#  - package
+#  - prepare-test-artifacts
+  - pact-consumer-test
+#  - prepare-prod-artifacts
+#
+#build:
+#  stage: build
+#  image: node:16.13.1-alpine
+#  before_script:
+#    - npm install
+#  script:
+#    - npm run build
+#
+#test:
+#  stage: test
+#  image: node:16.13.1-alpine
+#  before_script:
+#    - npm install
+#  script:
+#    - npm run test
+#
+#package:
+#  stage: package
+#  image: docker:18-git
+#  services:
+#    - name: docker:18-dind
+#  variables:
+#    DOCKER_REGISTRY_NAME: $MY_CI_REGISTRY_NAME:$CI_PIPELINE_ID
+#  script:
+#    - docker login -u $MY_CI_DOCKER_USER --password $MY_CI_DOCKER_PASS
+#    - docker build -t $DOCKER_REGISTRY_NAME $CI_PROJECT_DIR
+#    - docker push $DOCKER_REGISTRY_NAME
 
-build:
-  stage: build
+#prepare-test-artifacts:
+#  stage: prepare-test-artifacts
+#  image:
+#    name: eneskzlcn/helm-chart:2.0.0
+#    entrypoint: [""]
+#  variables:
+#    DEPLOYMENT_ENVIRONMENT: test
+#    HELM_CHART_REPO: https://${MY_CI_USERNAME}:${HELM_CHART_TOKEN}@gitlab.com/ahmet.zumberoglu/todo-helm.git
+#    DEPLOYMENT_ARTIFACTS_REPO: https://${MY_CI_USERNAME}:${DEPLOYMENT_ARTIFACTS_TOKEN}@gitlab.com/ahmet.zumberoglu/todo-deployment-artifacts.git
+#    HELM_APP_NAME: todo-frontend
+#  before_script:
+#    - git clone $HELM_CHART_REPO && cd todo-helm
+#    - mkdir -p rendered-templates
+#    - helm template $HELM_APP_NAME --set frontend.image.tag=${CI_PIPELINE_ID} --dry-run --output-dir ../rendered-templates
+#    - cat ../rendered-templates/${HELM_APP_NAME}/templates/${HELM_APP_NAME}-deployment.yml && cd ..
+#  script:
+#    - git clone $DEPLOYMENT_ARTIFACTS_REPO
+#    - cd todo-deployment-artifacts && git checkout -B main
+#    - git config --global user.email = "ci-cd@pipeline.com" && git config --global user.name = "CI CD Pipeline" && cd ..
+#    - rm -r todo-deployment-artifacts/${HELM_APP_NAME}/${DEPLOYMENT_ENVIRONMENT}/*
+#    - cp -r rendered-templates/${HELM_APP_NAME}/templates/* todo-deployment-artifacts/${HELM_APP_NAME}/${DEPLOYMENT_ENVIRONMENT}/
+#    - cd todo-deployment-artifacts && git add . -A && git commit -m "CI CD operation for env $DEPLOYMENT_ENVIRONMENT with pipeline id ${CI_PIPELINE_ID}"
+#    - git push $DEPLOYMENT_ARTIFACTS_REPO
+
+#deploy-to-test:
+
+pact-consumer-test:
+  stage: pact-consumer-test
   image: node:16.13.1-alpine
   before_script:
     - npm install
   script:
-    - npm run build
+    - npm run test:consumer
+#pact-publish:
 
-test:
-  stage: test
-  image: node:16.13.1-alpine
-  before_script:
-    - npm install
-  script:
-    - npm run test
-
-package:
-  stage: package
-  image: docker:18-git
-  services:
-    - name: docker:18-dind
-  variables:
-    DOCKER_REGISTRY_NAME: $MY_CI_REGISTRY_NAME:$CI_PIPELINE_ID
-  script:
-    - docker login -u $MY_CI_DOCKER_USER --password $MY_CI_DOCKER_PASS
-    - docker build -t $DOCKER_REGISTRY_NAME $CI_PROJECT_DIR
-    - docker push $DOCKER_REGISTRY_NAME
-
-prepare-test-artifacts:
-  stage: prepare-test-artifacts
-  image:
-    name: eneskzlcn/helm-chart:2.0.0
-    entrypoint: [""]
-  variables:
-    DEPLOYMENT_ENVIRONMENT: test
-    HELM_CHART_REPO: https://${MY_CI_USERNAME}:${HELM_CHART_TOKEN}@gitlab.com:ahmet.zumberoglu/todo-helm.git
-    DEPLOYMENT_ARTIFACTS_REPO: https://${MY_CI_USERNAME}:${DEPLOYMENT_ARTIFACTS_TOKEN}@gitlab.com:ahmet.zumberoglu/todo-deployment-artifacts.git
-    HELM_APP_NAME: todo-frontend
-  before_script:
-    - git clone $HELM_CHART_REPO
-    - mkdir -p rendered-templates && cd todo-helm
-    - helm template $HELM_APP_NAME --set frontend.image.tag=${CI_PIPELINE_ID} --dry-run --output-dir ../rendered-templates
-    - cat rendered-templates/${HELM_APP_NAME}/templates/${HELM_APP_NAME}-deployment.yml && cd ..
-  script:
-    - git clone $DEPLOYMENT_ARTIFACTS_REPO
-    - cd todo-deployment-artifacts && git checkout -B main
-    - git config --global user.email = "ci-cd@pipeline.com" && git config --global user.name = "CI CD Pipeline" && cd ..
-    - rm -r todo-deployment-artifacts/${HELM_APP_NAME}/${DEPLOYMENT_ENVIRONMENT}/*
-    - cp -r rendered-templates/${HELM_APP_NAME}/templates/* todo-deployment-artifacts/${HELM_APP_NAME}/${DEPLOYMENT_ENVIRONMENT}/
-    - cd todo-deployment-artifacts && git add . -A && git commit -m "CI CD operation for env $DEPLOYMENT_ENVIRONMENT with pipeline id ${CI_PIPELINE_ID}"
-    - git push $DEPLOYMENT_ARTIFACTS_REPO
+#prepare-prod-artifacts:
+#  stage: prepare-prod-artifacts
+#  image:
+#    name: eneskzlcn/helm-chart:2.0.0
+#    entrypoint: [""]
+#  variables:
+#    DEPLOYMENT_ENVIRONMENT: prod
+#    HELM_CHART_REPO: https://${MY_CI_USERNAME}:${HELM_CHART_TOKEN}@gitlab.com/ahmet.zumberoglu/todo-helm.git
+#    DEPLOYMENT_ARTIFACTS_REPO: https://${MY_CI_USERNAME}:${DEPLOYMENT_ARTIFACTS_TOKEN}@gitlab.com/ahmet.zumberoglu/todo-deployment-artifacts.git
+#    HELM_APP_NAME: todo-frontend
+#  before_script:
+#    - git clone $HELM_CHART_REPO && cd todo-helm
+#    - mkdir -p rendered-templates
+#    - helm template $HELM_APP_NAME --set frontend.image.tag=${CI_PIPELINE_ID} --dry-run --output-dir ../rendered-templates
+#    - cat ../rendered-templates/${HELM_APP_NAME}/templates/${HELM_APP_NAME}-deployment.yml && cd ..
+#  script:
+#    - git clone $DEPLOYMENT_ARTIFACTS_REPO
+#    - cd todo-deployment-artifacts && git checkout -B main
+#    - git config --global user.email = "ci-cd@pipeline.com" && git config --global user.name = "CI CD Pipeline" && cd ..
+#    - rm -r todo-deployment-artifacts/${HELM_APP_NAME}/${DEPLOYMENT_ENVIRONMENT}/*
+#    - cp -r rendered-templates/${HELM_APP_NAME}/templates/* todo-deployment-artifacts/${HELM_APP_NAME}/${DEPLOYMENT_ENVIRONMENT}/
+#    - cd todo-deployment-artifacts && git add . -A && git commit -m "CI CD operation for env $DEPLOYMENT_ENVIRONMENT with pipeline id ${CI_PIPELINE_ID}"
+#    - git push $DEPLOYMENT_ARTIFACTS_REPO
