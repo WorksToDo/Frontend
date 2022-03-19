@@ -5,7 +5,7 @@ stages:
 #  - test
 #  - package
 #  - prepare-test-artifacts
-  - pact-consumer-test
+#  - pact-consumer-test
 #  - prepare-prod-artifacts
 #
 #build:
@@ -62,36 +62,37 @@ stages:
 
 #deploy-to-test:
 
-pact-consumer-test:
-  stage: pact-consumer-test
-  image:
-    name: node:16.13.1-alpine
-  before_script:
-    - npm install
-    - npm i @pact-foundation/pact-mock-service
-  script:
-    - npm run test:consumer
+#pact-consumer-test:
+#  stage: pact-consumer-test
+#  image:
+#    name: node:16.13.1-alpine
+#  before_script:
+#    - npm install
+#    - npm i @pact-foundation/pact-mock-service
+#  script:
+#    - npm run test:consumer
+
 #pact-publish:
 
-
-deploy-to-test-env:
-  stage: deploy-to-test-env
-  image: eneskzlcn/doctl-kubectl-argocd:latest
-  variables:
-    ARGO_CD_APP_NAME: todo-frontend
-    ARGO_CD_SERVER: ${ARGO_CD_SERVER}
-    ARGOCD_USERNAME: ${ARGO_CD_USER}
-    ARGOCD_PASSWORD: ${ARGO_CD_PASSWORD}
-    CLUSTER_ID: ${TEST_CLUSTER_ID}
-    DEPLOYMENT_ENVIRONMENT: test
-  before_script:
-    - doctl auth init -t $DO_TOKEN
-    - doctl kubernetes cluster kubeconfig save $CLUSTER_ID
-    - kubectl apply -f $CI_PROJECT_DIR/.cd/argocd/${DEPLOYMENT_ENVIRONMENT}/argocd-secret.yml
-    - kubectl apply -f $CI_PROJECT_DIR/.cd/argocd/${DEPLOYMENT_ENVIRONMENT}/argocd.yml
-  script:
-    - argocd login $ARGO_CD_SERVER --username $ARGOCD_USERNAME --password $ARGOCD_PASSWORD --insecure
-    - argocd app sync $ARGO_CD_APP_NAME
+#
+#deploy-to-test-env:
+#  stage: deploy-to-test-env
+#  image: eneskzlcn/doctl-kubectl-argocd:latest
+#  variables:
+#    ARGO_CD_APP_NAME: todo-frontend
+#    ARGO_CD_SERVER: ${ARGO_CD_SERVER}
+#    ARGOCD_USERNAME: ${ARGO_CD_USER}
+#    ARGOCD_PASSWORD: ${ARGO_CD_PASSWORD}
+#    CLUSTER_ID: ${TEST_CLUSTER_ID}
+#    DEPLOYMENT_ENVIRONMENT: test
+#  before_script:
+#    - doctl auth init -t $DO_TOKEN
+#    - doctl kubernetes cluster kubeconfig save $CLUSTER_ID
+#    - kubectl apply -f $CI_PROJECT_DIR/.cd/argocd/argocd-secret.yml
+#    - kubectl apply -f $CI_PROJECT_DIR/.cd/argocd/${DEPLOYMENT_ENVIRONMENT}/argocd.yml
+#  script:
+#    - argocd login $ARGO_CD_SERVER --username $ARGOCD_USERNAME --password $ARGOCD_PASSWORD --insecure
+#    - argocd app sync $ARGO_CD_APP_NAME
 
 # acceptance test
 
@@ -133,7 +134,7 @@ deploy-to-test-env:
 #  before_script:
 #    - doctl auth init -t $DO_TOKEN
 #    - doctl kubernetes cluster kubeconfig save $CLUSTER_ID
-#    - kubectl apply -f $CI_PROJECT_DIR/.cd/argocd/${DEPLOYMENT_ENVIRONMENT}/argocd-secret.yml
+#    - kubectl apply -f $CI_PROJECT_DIR/.cd/argocd/argocd-secret.yml
 #    - kubectl apply -f $CI_PROJECT_DIR/.cd/argocd/${DEPLOYMENT_ENVIRONMENT}/argocd.yml
 #  script:
 #    - argocd login $ARGO_CD_SERVER --username $ARGOCD_USERNAME --password $ARGOCD_PASSWORD --insecure
