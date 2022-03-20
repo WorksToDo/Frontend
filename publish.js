@@ -13,13 +13,13 @@ const exec = command =>
 // TODO: Update these for your particular CI server
 const gitSha = process.env.TRAVIS_COMMIT || exec('git rev-parse HEAD || echo LOCAL_DEV')
 const branch = process.env.TRAVIS_BRANCH || exec('git rev-parse --abbrev-ref HEAD || echo LOCAL_DEV')
-
+const tag = process.env.DEP_ENV || 'no'
 const opts = {
   pactFilesOrDirs: [path.resolve(process.cwd(), 'pact/pacts')],
   pactBroker: 'https://zumber.pactflow.io',
   pactBrokerToken: 'AhT3yO3pFlB6lZpWskVDcA', // don't commit this!
   consumerVersion: gitSha,
-  tags: [branch]
+  tags: [branch, tag]
 }
 
 new Publisher(opts)

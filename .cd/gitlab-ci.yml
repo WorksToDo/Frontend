@@ -6,6 +6,7 @@ stages:
 #  - package
 #  - prepare-test-artifacts
 #  - pact-consumer-test
+  - pact-publish-test
 #  - prepare-prod-artifacts
 #
 #build:
@@ -65,16 +66,26 @@ stages:
 #pact-consumer-test:
 #  stage: pact-consumer-test
 #  image:
-#    name: node:16.13.1-alpine
+#    name: node:14.17.5-stretch-slim
 #  before_script:
+#    - npm i @pact-foundation/pact
 #    - npm install
-#    - npm i @pact-foundation/pact-mock-service
 #  script:
-#    - npm run test:consumer
+#    - yarn run test:consumer
+#  artifacts:
+#    paths:
+#      - pact/pacts/
+pact-publish-test:
+  stage: pact-publish
+    image:
+      name: node:14.17.5-stretch-slim
+    variables:
+      DEPLOYMENT_ENVIRONMENT: test
+    before_script:
+      - npm install
+    script:
+      - DEP_ENV=$DEPLOYMENT_ENVIRONMENT npm run pact:publish
 
-#pact-publish:
-
-#
 #deploy-to-test-env:
 #  stage: deploy-to-test-env
 #  image: eneskzlcn/doctl-kubectl-argocd:latest

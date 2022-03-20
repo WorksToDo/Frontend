@@ -1,8 +1,45 @@
 version: '3'
 services:
+  postgre-db:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "assignment"
+      POSTGRES_PASSWORD: "assign1"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - todoNetwork
+  todo-api:
+    image: eneskzlcn/todo-backend:latest
+    environment:
+      SERVER_PORT: 4000
+      DB_HOST: postgre-db
+      DB_DRIVER: "postgres"
+      DB_USERNAME: "assignment"
+      DB_PASSWORD: "assign1"
+      DB_PORT: "5432"
+      DB_NAME: "postgres"
+    ports:
+      - "5001:4000"
+    networks:
+      - todoNetwork
+    depends_on:
+      - postgre-db
   todo-frontend:
     image: eneskzlcn/todo-frontend:latest
     environment:
-      BACKEND_URL: "https://sanane.com:5000/"
+      BACKEND_URL: todo-api:4000/
     ports:
-      - "4000:3000"
+      - "3000:3000"
+    networks:
+      - todoNetwork
+    depends_on:
+      - todo-api
+volumes:
+  postgres:
+
+networks:
+  todoNetwork:
