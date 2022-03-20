@@ -89,10 +89,14 @@ stages:
 acceptance-test:
   stage: acceptance-test
   image:
-    name: eneskzlcn/todo-acceptance:latest
+    name: node:16.13.1-alpine
   variables:
     FRONTEND_URL: $TODO_FRONTEND_TEST_URL
+    ACCEPTANCE_REPO: https://${MY_CI_USERNAME}:${ACCEPTANCE_TOKEN}@gitlab.com/ahmet.zumberoglu/todo-acceptence.git
   before_script:
+    - apk --no-cache add git
+    - git clone $ACCEPTANCE_REPO
+    - cd todo-acceptence
     - npm install
   script:
     - FRONTEND_URL=$FRONTEND_URL npm run test
