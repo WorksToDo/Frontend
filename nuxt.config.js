@@ -2,7 +2,7 @@ export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
   env: {
-    BACKEND_URL: process.env.BACKEND_URL || 'http://127.0.0.1:5001/'
+    BACKEND_URL: process.env.BACKEND_URL
   },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
