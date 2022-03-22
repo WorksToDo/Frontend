@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ul v-if="todos.length != 0" class="mt-3 border rounded-xl shadow-2xl">
+    <ul v-if="todos" class="mt-3 border rounded-xl shadow-2xl">
       <TodoItem v-for="item in todos" :id="'todo'+item.id" :key="item.id" :item="item" />
     </ul>
   </div>

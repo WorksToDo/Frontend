@@ -68,9 +68,9 @@ deploy-to-test-env:
   image: eneskzlcn/gcloud-argocd-cli:latest
   variables:
     ARGO_CD_APP_NAME: todo-frontend
-    ARGO_CD_SERVER: ${ARGO_CD_SERVER}
-    ARGOCD_USERNAME: ${ARGO_CD_USER}
-    ARGOCD_PASSWORD: ${ARGO_CD_PASSWORD}
+    ARGO_CD_SERVER: $ARGO_CD_SERVER
+    ARGOCD_USERNAME: $ARGO_CD_USER
+    ARGOCD_PASSWORD: $ARGO_CD_PASSWORD
     DEPLOYMENT_ENVIRONMENT: test
     GKE_CLUSTER_NAME: test
     GKE_PROJECT_ID: $GKE_TEST_PROJECT_ID
@@ -79,7 +79,7 @@ deploy-to-test-env:
   before_script:
     - echo $GCLOUD_KEY | base64 -d > ${CI_PROJECT_DIR}/gcloud-key.json
     - gcloud auth activate-service-account --key-file ${CI_PROJECT_DIR}/gcloud-key.json
-    - gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_COMPUTE_ZONE -a --project $GKE_PROJECT_ID
+    - gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_COMPUTE_ZONE --project $GKE_PROJECT_ID
     - kubectl apply -f $CI_PROJECT_DIR/.cd/argocd/argocd-secret.yml
     - kubectl apply -f $CI_PROJECT_DIR/.cd/argocd/${DEPLOYMENT_ENVIRONMENT}/argocd.yml
   script:

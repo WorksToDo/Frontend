@@ -1,10 +1,10 @@
 import { mount } from '@vue/test-utils'
-import flushPromises from 'flush-promises'
+// import flushPromises from 'flush-promises'
 import TodoList from '~/components/TodoList.vue'
 // eslint-disable-next-line import/no-named-as-default
-import API from '~/api/api'
+// import API from '~/api/api'
 
-jest.mock('~/api/api')
+// jest.mock('~/api/api')
 
 describe('TodoList', () => {
   test('it renders correctly', () => {
