@@ -49,10 +49,11 @@ prepare-test-artifacts:
     HELM_CHART_REPO: https://${MY_CI_USERNAME}:${HELM_CHART_TOKEN}@gitlab.com/ahmet.zumberoglu/todo-helm.git
     DEPLOYMENT_ARTIFACTS_REPO: https://${MY_CI_USERNAME}:${DEPLOYMENT_ARTIFACTS_TOKEN}@gitlab.com/ahmet.zumberoglu/todo-deployment-artifacts.git
     HELM_APP_NAME: todo-frontend
+    BACKEND_URL: $TEST_BACKEND_URL
   before_script:
     - git clone $HELM_CHART_REPO && cd todo-helm
     - mkdir -p rendered-templates
-    - helm template $HELM_APP_NAME --set frontend.image.tag=${CI_PIPELINE_ID} --dry-run --output-dir ../rendered-templates
+    - helm template $HELM_APP_NAME --set frontend.image.tag=${CI_PIPELINE_ID} frontend.backendUrl=${BACKEND_URL} --dry-run --output-dir ../rendered-templates
     - cat ../rendered-templates/${HELM_APP_NAME}/templates/${HELM_APP_NAME}-deployment.yml && cd ..
   script:
     - git clone $DEPLOYMENT_ARTIFACTS_REPO
@@ -75,7 +76,7 @@ deploy-to-test-env:
     GKE_CLUSTER_NAME: test
     GKE_PROJECT_ID: $GKE_TEST_PROJECT_ID
     GKE_COMPUTE_ZONE: $GKE_TEST_CLUSTER_ZONE
-    ARGOCD_WAIT_TIMEOUT: 50
+    ARGOCD_HEALTH_TIMEOUT: 50
   before_script:
     - echo $GCLOUD_KEY | base64 -d > ${CI_PROJECT_DIR}/gcloud-key.json
     - gcloud auth activate-service-account --key-file ${CI_PROJECT_DIR}/gcloud-key.json
@@ -84,12 +85,14 @@ deploy-to-test-env:
     - kubectl apply -f $CI_PROJECT_DIR/.cd/argocd/${DEPLOYMENT_ENVIRONMENT}/argocd.yml
   script:
     - argocd login $ARGO_CD_SERVER --username $ARGOCD_USERNAME --password $ARGOCD_PASSWORD --insecure
-    - argocd app sync $ARGO_CD_APP_NAME && argocd app wait $ARGOCD_APP_NAME --timeout= $ARGOCD_WAIT_TIMEOUT
+    - argocd app sync $ARGO_CD_APP_NAME && argocd app wait $ARGOCD_APP_NAME -l argocd.argoproj.io/instance=$ARGOCD_APP_NAME --health --timeout $ARGOCD_HEALTH_TIMEOUT
 
 pact-consumer-test:
   stage: pact-consumer-test
   image:
     name: node:14.17.5-stretch-slim
+  variables:
+    BACKEND_URL: $BACKEND_URL_TEST
   before_script:
     - npm i @pact-foundation/pact
     - npm install

@@ -31,7 +31,7 @@ services:
   todo-frontend:
     image: eneskzlcn/todo-frontend:latest
     environment:
-      - BACKEND_URL="http://34.118.64.237:8080/todos"
+      - BACKEND_URL="http://34.118.64.237:8080"
     ports:
       - "3000:3000"
 #    networks:
