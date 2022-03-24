@@ -54,11 +54,10 @@ prepare-test-artifacts:
     DEPLOYMENT_ARTIFACTS_REPO: https://${MY_CI_USERNAME}:${DEPLOYMENT_ARTIFACTS_TOKEN}@gitlab.com/ahmet.zumberoglu/todo-deployment-artifacts.git
     HELM_APP_NAME: todo-frontend
     BACKEND_URL: $TEST_BACKEND_URL
-    DEPLOYMENT_ENV: test
   before_script:
     - git clone $HELM_CHART_REPO && cd todo-helm
     - mkdir -p rendered-templates
-    - helm template $HELM_APP_NAME --set frontend.image.tag=${CI_PIPELINE_ID} --set backendUrl=${BACKEND_URL} --set deployEnv=${DEPLOYMENT_ENV} --dry-run --output-dir ../rendered-templates
+    - helm template $HELM_APP_NAME --set frontend.image.tag=${CI_PIPELINE_ID} --set backendUrl=${BACKEND_URL} --set deployEnv=${DEPLOYMENT_ENVIRONMENT} --dry-run --output-dir ../rendered-templates
     - cat ../rendered-templates/${HELM_APP_NAME}/templates/${HELM_APP_NAME}-deployment.yml && cd ..
   script:
     - git clone $DEPLOYMENT_ARTIFACTS_REPO
