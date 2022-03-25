@@ -7,11 +7,18 @@
 </template>
 
 <script>
-export default {
+import Vue from 'vue'
+import TodoItem from '~/components/TodoItem'
+
+export default Vue.extend({
+  name: 'TodoList',
+  components: {
+    TodoItem
+  },
   props: {
     todos: []
   }
-}
+})
 </script>
 
 <style>
