@@ -91,31 +91,31 @@ deploy-to-test-env:
     - argocd login $ARGO_CD_SERVER --username $ARGOCD_USERNAME --password $ARGOCD_PASSWORD --insecure
     - argocd app sync $ARGO_CD_APP_NAME && argocd app wait $ARGOCD_APP_NAME -l argocd.argoproj.io/instance=$ARGOCD_APP_NAME --health --timeout $ARGOCD_HEALTH_TIMEOUT
 
-pact-consumer-test:
-  stage: pact-consumer-test
-  image:
-    name: node:14.17.5-stretch-slim
-  variables:
-    BACKEND_URL: $TEST_BACKEND_UsRL
-  before_script:
-    - npm i @pact-foundation/pact
-    - npm install
-  script:
-    - yarn run test:consumer
-  artifacts:
-    paths:
-      - pact/pacts/
-
-pact-publish-test:
-  stage: pact-publish-test
-  image:
-    name: node:14.17.5-stretch-slim
-  variables:
-    DEPLOYMENT_ENVIRONMENT: test
-  before_script:
-    - npm install
-  script:
-    - DEP_ENV=$DEPLOYMENT_ENVIRONMENT npm run pact:publish
+#pact-consumer-test:
+#  stage: pact-consumer-test
+#  image:
+#    name: node:14.17.5-stretch-slim
+#  variables:
+#    BACKEND_URL: $TEST_BACKEND_UsRL
+#  before_script:
+#    - npm i @pact-foundation/pact
+#    - npm install
+#  script:
+#    - yarn run test:consumer
+#  artifacts:
+#    paths:
+#      - pact/pacts/
+#
+#pact-publish-test:
+#  stage: pact-publish-test
+#  image:
+#    name: node:14.17.5-stretch-slim
+#  variables:
+#    DEPLOYMENT_ENVIRONMENT: test
+#  before_script:
+#    - npm install
+#  script:
+#    - DEP_ENV=$DEPLOYMENT_ENVIRONMENT npm run pact:publish
 #acceptance-test:
 #  stage: acceptance-test
 #  image:
@@ -125,75 +125,75 @@ pact-publish-test:
 #  script:
 #    - echo -n it is done
 
-package-prod:
-  stage: package-prod
-  image: docker:18-git
-  services:
-    - name: docker:18-dind
-  variables:
-    DEPLOYMENT_ENVIRONMENT: prod
-    DOCKER_REGISTRY_NAME: ${MY_CI_REGISTRY_NAME}-${DEPLOYMENT_ENVIRONMENT}:$CI_PIPELINE_ID
-    BACKEND_URL: $PROD_BACKEND_URL
-  script:
-    - docker login -u $MY_CI_DOCKER_USER --password $MY_CI_DOCKER_PASS
-    - docker build -f Dockerfile -t $DOCKER_REGISTRY_NAME --build-arg BACKEND_URL=$BACKEND_URL $CI_PROJECT_DIR
-    - docker push $DOCKER_REGISTRY_NAME
+#package-prod:
+#  stage: package-prod
+#  image: docker:18-git
+#  services:
+#    - name: docker:18-dind
+#  variables:
+#    DEPLOYMENT_ENVIRONMENT: prod
+#    DOCKER_REGISTRY_NAME: ${MY_CI_REGISTRY_NAME}-${DEPLOYMENT_ENVIRONMENT}:$CI_PIPELINE_ID
+#    BACKEND_URL: $PROD_BACKEND_URL
+#  script:
+#    - docker login -u $MY_CI_DOCKER_USER --password $MY_CI_DOCKER_PASS
+#    - docker build -f Dockerfile -t $DOCKER_REGISTRY_NAME --build-arg BACKEND_URL=$BACKEND_URL $CI_PROJECT_DIR
+#    - docker push $DOCKER_REGISTRY_NAME
 
-prepare-prod-artifacts:
-  stage: prepare-prod-artifacts
-  image:
-    name: eneskzlcn/helm-chart:2.0.0
-    entrypoint: [""]
-  variables:
-    HELM_CHART_REPO: https://${MY_CI_USERNAME}:${HELM_CHART_TOKEN}@gitlab.com/todo32/helm.git
-    DEPLOYMENT_ARTIFACTS_REPO: https://${MY_CI_USERNAME}:${DEPLOYMENT_ARTIFACTS_TOKEN}@gitlab.com/todo32/deployment-artifacts.git
-    HELM_APP_NAME: todo-frontend
-    BACKEND_URL: $PROD_BACKEND_URL
-    DEPLOYMENT_ENVIRONMENT: prod
-  before_script:
-    - git clone $HELM_CHART_REPO && cd helm
-    - mkdir -p rendered-templates
-    - helm template $HELM_APP_NAME --set frontend.image.tag=${CI_PIPELINE_ID} --set backendUrl=${BACKEND_URL} --set deployEnv=${DEPLOYMENT_ENVIRONMENT} --dry-run --output-dir ../rendered-templates
-    - cat ../rendered-templates/${HELM_APP_NAME}/templates/${HELM_APP_NAME}-deployment.yml && cd ..
-  script:
-    - git clone $DEPLOYMENT_ARTIFACTS_REPO
-    - cd todo-deployment-artifacts && git checkout -B main
-    - git config --global user.email = "ci-cd@pipeline.com" && git config --global user.name = "CI CD Pipeline" && cd ..
-    - rm -r todo-deployment-artifacts/${HELM_APP_NAME}/${DEPLOYMENT_ENVIRONMENT}/*
-    - cp -r rendered-templates/${HELM_APP_NAME}/templates/* todo-deployment-artifacts/${HELM_APP_NAME}/${DEPLOYMENT_ENVIRONMENT}/
-    - cd todo-deployment-artifacts && git add . -A && git commit -m "CI CD operation for env ${DEPLOYMENT_ENVIRONMENT} with pipeline id ${CI_PIPELINE_ID}"
-    - git push $DEPLOYMENT_ARTIFACTS_REPO
-
-deploy-to-prod-env:
-  stage: deploy-to-prod-env
-  image: eneskzlcn/gcloud-argocd-cli:latest
-  variables:
-    ARGO_CD_APP_NAME: todo-frontend
-    ARGO_CD_SERVER: $ARGO_CD_PROD_SERVER
-    ARGOCD_USERNAME: $ARGO_CD_PROD_USER
-    ARGOCD_PASSWORD: $ARGO_CD_PROD_PASSWORD
-    DEPLOYMENT_ENVIRONMENT: prod
-    GKE_CLUSTER_NAME: prod
-    GKE_PROJECT_ID: $GKE_PROD_PROJECT_ID
-    GKE_COMPUTE_ZONE: $GKE_PROD_CLUSTER_ZONE
-    ARGOCD_HEALTH_TIMEOUT: 50
-  before_script:
-    - echo $GCLOUD_KEY | base64 -d > ${CI_PROJECT_DIR}/gcloud-key.json
-    - gcloud auth activate-service-account --key-file ${CI_PROJECT_DIR}/gcloud-key.json
-    - gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_COMPUTE_ZONE --project $GKE_PROJECT_ID
-    - kubectl apply -f $CI_PROJECT_DIR/.cd/argocd/argocd-secret.yml
-    - kubectl apply -f $CI_PROJECT_DIR/.cd/argocd/${DEPLOYMENT_ENVIRONMENT}/argocd.yml
-  script:
-    - argocd login $ARGO_CD_SERVER --username $ARGOCD_USERNAME --password $ARGOCD_PASSWORD --insecure
-    - argocd app sync $ARGO_CD_APP_NAME && argocd app wait $ARGOCD_APP_NAME -l argocd.argoproj.io/instance=$ARGOCD_APP_NAME --health --timeout $ARGOCD_HEALTH_TIMEOUT
-
-pact-publish-prod:
-  stage: pact-publish-prod
-  image:
-    name: node:14.17.5-stretch-slim
-  variables:
-    DEPLOYMENT_ENVIRONMENT: prod
-  before_script:
-    - npm install
-  script:
-    - DEP_ENV=$DEPLOYMENT_ENVIRONMENT npm run pact:publish
+#prepare-prod-artifacts:
+#  stage: prepare-prod-artifacts
+#  image:
+#    name: eneskzlcn/helm-chart:2.0.0
+#    entrypoint: [""]
+#  variables:
+#    HELM_CHART_REPO: https://${MY_CI_USERNAME}:${HELM_CHART_TOKEN}@gitlab.com/todo32/helm.git
+#    DEPLOYMENT_ARTIFACTS_REPO: https://${MY_CI_USERNAME}:${DEPLOYMENT_ARTIFACTS_TOKEN}@gitlab.com/todo32/deployment-artifacts.git
+#    HELM_APP_NAME: todo-frontend
+#    BACKEND_URL: $PROD_BACKEND_URL
+#    DEPLOYMENT_ENVIRONMENT: prod
+#  before_script:
+#    - git clone $HELM_CHART_REPO && cd helm
+#    - mkdir -p rendered-templates
+#    - helm template $HELM_APP_NAME --set frontend.image.tag=${CI_PIPELINE_ID} --set backendUrl=${BACKEND_URL} --set deployEnv=${DEPLOYMENT_ENVIRONMENT} --dry-run --output-dir ../rendered-templates
+#    - cat ../rendered-templates/${HELM_APP_NAME}/templates/${HELM_APP_NAME}-deployment.yml && cd ..
+#  script:
+#    - git clone $DEPLOYMENT_ARTIFACTS_REPO
+#    - cd todo-deployment-artifacts && git checkout -B main
+#    - git config --global user.email = "ci-cd@pipeline.com" && git config --global user.name = "CI CD Pipeline" && cd ..
+#    - rm -r todo-deployment-artifacts/${HELM_APP_NAME}/${DEPLOYMENT_ENVIRONMENT}/*
+#    - cp -r rendered-templates/${HELM_APP_NAME}/templates/* todo-deployment-artifacts/${HELM_APP_NAME}/${DEPLOYMENT_ENVIRONMENT}/
+#    - cd todo-deployment-artifacts && git add . -A && git commit -m "CI CD operation for env ${DEPLOYMENT_ENVIRONMENT} with pipeline id ${CI_PIPELINE_ID}"
+#    - git push $DEPLOYMENT_ARTIFACTS_REPO
+#
+#deploy-to-prod-env:
+#  stage: deploy-to-prod-env
+#  image: eneskzlcn/gcloud-argocd-cli:latest
+#  variables:
+#    ARGO_CD_APP_NAME: todo-frontend
+#    ARGO_CD_SERVER: $ARGO_CD_PROD_SERVER
+#    ARGOCD_USERNAME: $ARGO_CD_PROD_USER
+#    ARGOCD_PASSWORD: $ARGO_CD_PROD_PASSWORD
+#    DEPLOYMENT_ENVIRONMENT: prod
+#    GKE_CLUSTER_NAME: prod
+#    GKE_PROJECT_ID: $GKE_PROD_PROJECT_ID
+#    GKE_COMPUTE_ZONE: $GKE_PROD_CLUSTER_ZONE
+#    ARGOCD_HEALTH_TIMEOUT: 50
+#  before_script:
+#    - echo $GCLOUD_KEY | base64 -d > ${CI_PROJECT_DIR}/gcloud-key.json
+#    - gcloud auth activate-service-account --key-file ${CI_PROJECT_DIR}/gcloud-key.json
+#    - gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_COMPUTE_ZONE --project $GKE_PROJECT_ID
+#    - kubectl apply -f $CI_PROJECT_DIR/.cd/argocd/argocd-secret.yml
+#    - kubectl apply -f $CI_PROJECT_DIR/.cd/argocd/${DEPLOYMENT_ENVIRONMENT}/argocd.yml
+#  script:
+#    - argocd login $ARGO_CD_SERVER --username $ARGOCD_USERNAME --password $ARGOCD_PASSWORD --insecure
+#    - argocd app sync $ARGO_CD_APP_NAME && argocd app wait $ARGOCD_APP_NAME -l argocd.argoproj.io/instance=$ARGOCD_APP_NAME --health --timeout $ARGOCD_HEALTH_TIMEOUT
+#
+#pact-publish-prod:
+#  stage: pact-publish-prod
+#  image:
+#    name: node:14.17.5-stretch-slim
+#  variables:
+#    DEPLOYMENT_ENVIRONMENT: prod
+#  before_script:
+#    - npm install
+#  script:
+#    - DEP_ENV=$DEPLOYMENT_ENVIRONMENT npm run pact:publish
