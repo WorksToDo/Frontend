@@ -96,7 +96,7 @@ pact-consumer-test:
   image:
     name: node:14.17.5-stretch-slim
   variables:
-    BACKEND_URL: $BACKEND_URL_TEST
+    BACKEND_URL: $TEST_BACKEND_UsRL
   before_script:
     - npm i @pact-foundation/pact
     - npm install
